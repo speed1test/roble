@@ -1,0 +1,373 @@
+<script>
+       $(document).ready(function() {
+            $("#Editar").click(function(){
+				var id = $("#id-edit").val();
+            	var nombre = $("#nombre").val();
+                var apellido = $("#apellido").val();
+                var dui = $("#dui").val();
+                var resultado = $("#estado").val();
+                var sexo = $("sexo").val();
+                var fecha = $("fecha").val();
+                var municipio = $("id_municipio").val();
+                var letra, numero;
+
+                 letra=/^[a-zA-ZáÁéÉíÍóÓúÚñÑüÜ\s]+$/;
+                 correo = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                 numero = /^([0-9])*$/;
+
+                if(id === "" || nombre === "" || apellido === "" || usuario === "" || email === "" || telefono === "" || direccion === ""  ){
+
+                	alert("Todos los campos son obligatorios");
+
+                	return false;
+              	    }
+                	if(!letra.test(nombre)){
+                		alert("El nombre es incorrecto");
+                		return false;
+                		
+                	}else if(nombre.length > 30){
+                		alert("El nombre es demasiado largo");
+                		return false;
+                	}
+             		
+             		if(!letra.test(apellido)){
+             			alert("El apellido es incorrecto");
+             			return false;
+             		}else if(apellido.length > 30){
+                		alert("El apellido es demasiado largo");
+                		return false;
+                	}
+                	if(usuario.length > 15){
+                		alert("El nombre de usuario es demasiado largo");
+                		return false;
+                	}
+                	
+                	if(!correo.test(email)){
+                		alert("El correo ingresado es incorrecto");
+                		return false;
+                	}
+                	
+					if(!numero.test(telefono) || telefono.length > 9 || telefono.length < 9){
+						alert("El numero de telefono es incorrecto");
+						return false;
+					}
+					if(direccion.length > 50){
+						alert("La direccion es demasiado larga");
+						return false;
+
+					}
+
+				});
+        	});
+</script>
+<script type="text/javascript">
+
+            $(document).ready(function() {
+                $("#id_departamento").on("change", getMunicipios);
+                $("#filtrarInfo").on("click", getInfo);
+            });
+
+            function getMunicipios() {
+                var departamentoId = $("#id_departamento").val();
+                if (departamentoId) {
+                    // Eliminamos las opciones anteriores del select
+                    $("#id_municipio").html("");
+                    var request = $.ajax({
+                        type: "GET",
+                        url: "{% url 'get_municipios' %}",
+                        data: {
+                            "departamento_id": departamentoId,
+                        },
+                    });
+                    request.done(function(response) {
+                        // Agregamos los resultados al select
+                        $("#id_municipio").html(response.municipios);
+                        $("#id_municipio").trigger("change");
+                    });
+                } else {
+                    $("#id_municipio").html("<option value='' selected='selected'>--------</option>");
+                    $("#id_municipio").trigger("change");
+                }
+            }
+</script>
+<div class="col-md-11 py-3 px-4 main-container">
+	{% csrf_token %}
+	<h4>Administraci&oacute;n de Pruebas por Paciente</h4>
+
+	<p class="lead">Estos son los pacientes registrados con nososotros.</p>
+
+
+	<div class="row mt-4 justify-content-md-center">
+
+		<table class="table table-hover col-12">
+			<thead>
+				<tr class="d-flex bg-primary text-white text-center">
+					<th class="col-1">N°</th>
+					<th class="col-3">Nombre</th>
+					<th class="col-1">DUI</th>
+					<th class="col-2">Resultado</th>
+					
+					<th class="col">Sintomas</th>
+					<th class="col">Opciones</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for minsal in pacientes %}
+				<tr class="d-flex text-center">
+					<td class="col-1 font-weight-bold">{{ forloop.counter }}</td>
+					<td class="col-3 font-weight-bold">{{minsal.paciente.nombre_paciente}} {{minsal.paciente.apellido_paciente}}</td>
+					<td class="col-1">{{minsal.paciente.dui_paciente}}</td>
+					
+					{% if minsal.estado_paciente == True %}
+							<td class="col-2">Positivo</td>
+					{% else %}
+							<td class="col-2">Negativo</td>
+					{% endif %}
+					<td class="col">{{ minsal.descripcion_paciente}}</td>
+					<td class="col">
+
+						<button class="btn btn-success" title="Editar Información del Laboratorista"
+							data-toggle="modal" data-target="#editar-paciente-modal"
+							data-id="{{minsal.paciente.idPaciente}}"
+							data-nombre="{{minsal.paciente.nombre_paciente}}"
+							data-apellido="{{minsal.paciente.apellido_paciente}}"
+							data-dui="{{minsal.paciente.dui_paciente}}"
+							data-desc="{{minsal.descripcion_paciente}}"
+							data-fecha="{{minsal.paciente.fecha_paciente}}"
+							data-sexo="{{minsal.paciente.sexo_paciente}}"
+							data-estado="{{minsal.estado_paciente}}"
+							
+							
+
+						>
+						Editar&nbsp;&nbsp;<i class="fas fa-pen"></i>
+						</button>
+					</td>
+				</tr>
+				{% empty %}
+				<tr>
+					<td colspan="6">
+						<h4>Aún no registras Pacientes.</h4>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<!-- Modal mensaje de error -->
+{% if messages %}
+<div class="modal fade" id="mostrarmodal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3>Error al guardar el t&eacute;</h3>
+			</div>
+			{% for message in messages %}
+			<div class="modal-body">
+				<h4 {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</h4>
+			</div>
+			{% endfor %}
+			<div class="modal-footer">
+				<a href="#" data-dismiss="modal" class="btn btn-danger">Cerrar</a>
+			</div>
+		</div>
+	</div>
+</div>
+{% endif %}
+
+<!-- Modal Agregar laboratoristas -->
+<div class="modal fade" id="agregar-minsal-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog" role="document">
+
+	<div class="modal-content">
+	<form action="{% url 'registrar_paciente' %}" method="POST">
+
+		<div class="modal-header">
+			<h5 class="modal-title" id="exampleModalLabel">Agregar nuevo paciente</h5>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+
+		<div class="modal-body">
+			<div class="form-group row">
+				<label for="nombre" class="col-sm-2 col-form-label">Nombre</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="nombre" name="nombre" placeholder="" required="">
+				</div>
+			</div>
+			<div class="form-group row">
+				<label for="apellido" class="col-sm-2 col-form-label">Apellido</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="apellido" name="apellido" placeholder="" required="">
+				</div>
+			</div>
+			
+			<div class="form-group row">
+				<label for="dui" class="col-sm-2 col-form-label">DUI</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="dui" name="dui" placeholder="" required="">
+				</div>
+			</div>
+
+			<div class="form-group row">
+      			<label for="resultado" class="col-sm-2 col-form-label">Resultado: </label>
+      			<div class="col-sm-10">
+      				<select name="estado" id="estado" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+        			<option selected required="">Seleccione..</option>
+        			<option value="1">Positivo</option>
+        			<option value="0">Negativo</option>
+      				</select>
+      			</div>
+    		</div>
+
+    		<div class="form-group row">
+      			<label for="fecha_propuesta" class="col-sm-2 col-form-label" >Sexo: </label>
+      			<div class="col-sm-10">
+      				<select name="sexo" id="sexo" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+        			<option selected required="">Seleccione..</option>
+        			<option value="0">Masculino</option>
+        			<option value="1">Femenino</option>
+      				</select>
+      			</div>
+    		</div>
+    		<div class="form-group row">
+				<label for="fecha_propuesta" class="col-sm-2 col-form-label">Fecha de Nacimiento:</label>
+				<div class="col-sm-10">
+					<input type="date" class="form-control" id="fecha" name="fecha" placeholder="" required="">
+				</div>
+			</div>
+
+
+			<div class="form-group row justify-content-md-center">
+				
+			</div>
+		</div>
+		
+		<div class="modal-footer">
+			{% csrf_token %}
+			<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+			<button type="submit" class="btn btn-primary col-sm-4 col-form-label" id="Registrar">Registrar</button>
+		</div>
+
+	</form>
+	</div>
+
+</div>
+</div>
+
+<!-- Modal Editar Paciente -->
+<div class="modal fade" id="editar-paciente-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog" role="document">
+
+	<div class="modal-content">
+		
+	<form action="{% url 'editar_paciente' %}" method="POST">
+
+		<div class="modal-header">
+			<h5 class="modal-title" id="exampleModalLabel">Editar paciente </h5>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+	
+		<div class="modal-body">
+				<div class="form-group row d-none">
+				<label for="id-edit" class="col-sm-2 col-form-label">ID de Cliente</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="id-edit" name="id_edit" placeholder="">
+				</div>
+			</div>
+			<div class="form-group row">
+				<label for="nombre" class="col-sm-2 col-form-label">Nombre</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="nombre-edit" name="nombre_edit" placeholder="" required="">
+				</div>
+			</div>
+			<div class="form-group row">
+				<label for="apellido" class="col-sm-2 col-form-label">Apellido</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="apellido-edit" name="apellido_edit" placeholder="" required="">
+				</div>
+			</div>
+			
+			<div class="form-group row">
+				<label for="dui" class="col-sm-2 col-form-label">DUI</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="dui-edit" name="dui_edit" placeholder="" required="">
+				</div>
+			</div>
+
+			<div class="form-group row">
+      			<label for="resultado" class="col-sm-2 col-form-label">Resultado: </label>
+      			<div class="col-sm-10">
+      				<select id="estado-edit" name="estado_edit" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+        			<option selected required="">Seleccione..</option>
+        			<option value="1">Positivo</option>
+        			<option value="0">Negativo</option>
+      				</select>
+      			</div>
+    		</div>
+
+    		<div class="form-group row">
+      			<label for="fecha_propuesta" class="col-sm-2 col-form-label" >Sexo: </label>
+      			<div class="col-sm-10">
+      				<select id="sexo-edit" name="sexo_edit" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+        			<option selected required="">Seleccione..</option>
+        			<option value="0">Masculino</option>
+        			<option value="1">Femenino</option>
+      				</select>
+      			</div>
+    		</div>
+    		<div class="form-group row">
+				<label for="fecha_propuesta" class="col-sm-2 col-form-label">Fecha de Nacimiento:</label>
+				<div class="col-sm-10">
+					<input type="date" class="form-control" id="fecha-edit" name="fecha_edit" placeholder="" required="">
+				</div>
+			</div>
+			<div class="form-group row">
+      			<label for="correo" class="col-sm-2 col-form-label">Departamento:</label>
+      			<div class="col-sm-10">
+                    {{ form.departamento.label_tag }} 
+                    {{ form.departamento }}
+      			</div>
+    		</div>
+    		<div class="form-group row">
+      			<label for="correo" class="col-sm-2 col-form-label">Municipio:</label>
+      			<div class="col-sm-10">
+                    {{ form.municipio.label_tag }} 
+                    {{ form.municipio }}
+      			</div>
+    		</div>
+    		<div class="form-group row">
+					<label for="sintomas" class="col-sm-2 col-form-label">Sintomas</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="sintomas" name="sintomas" placeholder="">
+					</div>
+			</div>
+			<div class="form-group row justify-content-md-center">
+				
+			</div>
+		</div>
+		
+		<div class="modal-footer">
+			{% csrf_token %}
+			<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+			<button type="submit" class="btn btn-primary col-sm-4 col-form-label" id="Registrar">Actualizar</button>
+		</div>
+
+		
+	</form>
+	</div>
+
+</div>
+</div>
+
+
+<script>
+	$(document).ready(function () {
+		$("#mostrarmodal").modal("show");
+	});
+</script>

@@ -1,0 +1,22 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block main_container %}
+<script src="{% static '/js/graficos/graficos.js' %}"></script>
+
+{% if request.user.rol == 0 %}
+		<!-- Vista para Doctor -->
+		<center>
+			<h1>
+				Hola Doctor, aquí tienes las graficas
+			</h1>
+		</center>
+		{% include 'graficas.html' %}
+	{% else %}
+		<!-- Vista para Visitante -->
+			<h2 class="animated pulse" style="color: blue;">Nada que mostrar :)</h2>
+	{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+{% endblock %}

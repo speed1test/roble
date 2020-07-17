@@ -1,0 +1,367 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block main_container %}
+
+<script>
+       $(document).ready(function() {
+            $("#Guardar").click(function(){
+            	
+
+            	var placa = $("#placa").val();
+            	var tipo = $("#tipo").val();
+            	var marca = $("#marca").val();
+            	var modelo = $("#modelo").val();
+            	var anio = $("#anio").val();
+            	var letra, numero;
+            	 letra=/^[a-zA-ZáÁéÉíÍóÓúÚñÑüÜ\s]+$/;
+            	  numero = /^([0-9])*$/;
+
+            	  if(placa === "" || tipo === "" || marca === "" || modelo === "" || anio === "" ){
+            	  	alert("Todos los campos son obligatorios");
+            	  	return false;
+            	  }
+            	  if(!letra.test(tipo)){
+            	  	alert("El tipo de auto es incorrecto");
+            	  	return false;
+            	  }else if(tipo.length > 30){
+            	  	alert("El tipo del auto es demasiado largo");
+            	  	return false;
+            	  }
+            	  if(!letra.test(marca)){
+            	  	alert("La marca del auto es incorrecta");
+            	  	return false;
+            	  }else if(marca.length > 30){
+            	  	alert("La marca del auto es demasiado larga");
+            	  	return false;
+            	  }
+            	  if(modelo.length > 30){
+            	  	alert("El modelo del auto es demasiado largo");
+            	  	return false;
+            	  }
+            	  if(!numero.test(anio) || anio.length > 4){
+            	  	alert("El año del auto es incorrecto");
+            	  	return false;
+            	  }
+            	});
+        	});
+</script>
+<script>
+       $(document).ready(function() {
+            $("#Editar").click(function(){
+            	
+            	var placa = $("#placa-edit").val();
+            	var tipo = $("#tipo-edit").val();
+            	var marca = $("#marca-edit").val();
+            	var modelo = $("#modelo-edit").val();
+            	var anio = $("#anio-edit").val();
+            	var letra, numero;
+            	 letra=/^[a-zA-ZáÁéÉíÍóÓúÚñÑüÜ\s]+$/;
+            	  numero = /^([0-9])*$/;
+
+            	   if(placa === "" || tipo === "" || marca === "" || modelo === "" || anio === "" ){
+            	  	alert("Todos los campos son obligatorios");
+            	  	return false;
+            	  }
+            	  if(!letra.test(tipo)){
+            	  	alert("El tipo de auto es incorrecto");
+            	  	return false;
+            	  }else if(tipo.length > 30){
+            	  	alert("El tipo del auto es demasiado largo");
+            	  	return false;
+            	  }
+            	  if(!letra.test(marca)){
+            	  	alert("La marca del auto es incorrecta");
+            	  	return false;
+            	  }else if(marca.length > 30){
+            	  	alert("La marca del auto es demasiado larga");
+            	  	return false;
+            	  }
+            	  if(modelo.length > 30){
+            	  	alert("El modelo del auto es demasiado largo");
+            	  	return false;
+            	  }
+            	  if(!numero.test(anio) || anio.length > 4){
+            	  	alert("El año del auto es incorrecto");
+            	  	return false;
+            	  }
+            	});
+        	});
+</script>
+
+
+
+<div class="col-md-12 py-3 px-4 main-container">
+
+	<h4>Vehiculos de {{request.user.first_name}} {{request.user.last_name}}</h4>
+
+	{% if request.user.rol == 0 %}
+		<p class="lead">Vista de Administrador</p>
+	{% elif request.user.rol == 1 %}
+		
+	{% elif request.user.rol == 2 %}
+		<p class="lead">Estos son los veh&iacute;culos que tienes registrados con nosotros.</p>
+	{% else %}
+	{% endif %}
+
+	<div class="row text-right">
+		<div class="col-md-7"></div>
+		<div class="col-md-5">
+			<a href="{% url 'gestion_visitas_cliente' cliente_id=cliente.id %}" class="btn btn-success text-white">
+				Visitas del Cliente&nbsp;&nbsp;<i class="fas fa-home"></i>
+			</a>
+			<button class="btn btn-info" data-toggle="modal" data-target="#agregar-vehiculo-modal">
+				Agregar Veh&iacute;culo&nbsp;&nbsp;<i class="fas fa-plus-circle"></i>
+			</button>
+		</div>
+	</div>
+
+	<div class="row mt-4 justify-content-md-center">
+
+		<table class="table table-hover col-12">
+			<thead>
+				<tr class="d-flex bg-primary text-white text-center">
+					<th class="col-1">N°</th>
+					<th class="col-1">Placa</th>
+					<th class="col-2">Marca</th>
+					<th class="col-2">Modelo</th>
+					<th class="col-2">Año</th>
+					<th class="col-4">Opciones</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for vehiculo in vehiculos %}
+				<tr class="d-flex text-center">
+					<td class="col-1 font-weight-bold">{{ forloop.counter }}</td>
+					<td class="col-1 font-weight-bold">{{vehiculo.placa}}</td>
+					<td class="col-2">{{vehiculo.marca}}</td>
+					<td class="col-2">{{vehiculo.modelo}}</td>
+					<td class="col-2">{{vehiculo.anio}}</td>
+					<td class="col-4">
+						<a href="{% url 'expediente_vehiculo' vehiculo_id=vehiculo.id %}" class="btn btn-success" title="">
+							Expediente &nbsp;&nbsp;<i class="fas fa-file-invoice"></i>
+						</a>
+
+						<button class="btn btn-success" title="Editar Información del Veh&iacute;culo"
+							data-toggle="modal" data-target="#editar-vehiculo-modal" data-id="{{vehiculo.id}}"
+							data-placa="{{vehiculo.placa}}" data-tipo="{{vehiculo.tipo}}"
+							data-marca="{{vehiculo.marca}}" data-modelo="{{vehiculo.modelo}}"
+							data-anio="{{vehiculo.anio}}">Editar&nbsp;&nbsp;<i class="fas fa-pen"></i></button>
+
+							{% if request.user.rol != 2%}
+								<button class="btn btn-danger" title="Eliminar el Veh&iacute;culo" data-toggle="modal"
+								data-target="#eliminar-vehiculo-modal" data-id="{{vehiculo.id}}"
+								data-placa="{{vehiculo.placa}}">
+									Eliminar&nbsp;&nbsp;<i class="far fa-trash-alt"></i>
+								</button>
+							{% endif %}
+					</td>
+				</tr>
+				{% empty %}
+				<tr>
+					<td colspan="6">
+						<h4>Aun no registras veh&iacute;culos.</h4>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+	</div>
+</div>
+
+<!-- Modal Agregar Vehiculo -->
+<div class="modal fade" id="agregar-vehiculo-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<form action="{% url 'agregar_vehiculo' %}" method="POST">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Agregar nuevo Veh&iacute;culo.</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					{% csrf_token %}
+					<div class="form-group row d-none">
+						<label for="usuario-id" class="col-sm-2 col-form-label">Usuario ID</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="usuario-id" name="usuario_id" value="{{cliente.user.id}}">
+						</div>
+						<label for="cliente-id" class="col-sm-2 col-form-label">Cliente ID</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="cliente-id" name="cliente_id" value="{{cliente.id}}">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="placa" class="col-sm-2 col-form-label">Placa</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="placa" name="placa" placeholder="">
+						</div>
+					</div>
+					<div class="form-group row align-items-center">
+						<label for="tipo" class="col-sm-2 col-form-label">Tipo</label>
+						<div class="col-sm-10">
+							<select class="form-control" id="tipo" name="tipo">
+
+								<option name='tipo' value="Sedan">Sedan</option>
+								<option name='tipo' value="Pick Up">Pick Up</option>
+								<option name='tipo' value="Camioneta">Camioneta</option>
+								<option name='tipo' value="Deportivo">Deportivo</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="marca" class="col-sm-2 col-form-label">Marca</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="marca" name="marca" placeholder="">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="modelo" class="col-sm-2 col-form-label">Modelo</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="modelo" name="modelo" placeholder="">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="anio" class="col-sm-2 col-form-label">Año</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="anio" name="anio" placeholder="">
+						</div>
+					</div>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+					<input type="submit" class="btn btn-success" value="Guardar" id="Guardar">
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<!-- Modal Editar Vehiculo -->
+<div class="modal fade" id="editar-vehiculo-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<form action="{% url 'editar_vehiculo' %}" method="POST">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Editar Veh&iacute;culo.</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					{% csrf_token %}
+					<div class="form-group row d-none">
+						<label for="id-edit" class="col-sm-2 col-form-label">ID de Veh&iacute;culo</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="id-edit" name="id_edit" placeholder="">
+						</div>
+						<label for="usuario-id" class="col-sm-2 col-form-label">Usuario ID</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="usuario-id" name="usuario_id" value="{{cliente.user.id}}">
+						</div>
+						<label for="cliente-id" class="col-sm-2 col-form-label">Cliente ID</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="cliente-id" name="cliente_id" value="{{cliente.id}}">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="placa-edit" class="col-sm-2 col-form-label">Placa</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="placa-edit" name="placa_edit" placeholder="">
+						</div>
+					</div>
+					<div class="form-group row align-items-center">
+						<label for="tipo-edit" class="col-sm-2 col-form-label">Tipo</label>
+						<div class="col-sm-10">
+							<select class="form-control" id="tipo-edit" name="tipo_edit">
+
+								<option name='' value="Sedan">Sedan</option>
+								<option name='' value="Pick Up">Pick Up</option>
+								<option name='' value="Camioneta">Camioneta</option>
+								<option name='' value="Deportivo">Deportivo</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="marca-edit" class="col-sm-2 col-form-label">Marca</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="marca-edit" name="marca_edit" placeholder="">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="modelo-edit" class="col-sm-2 col-form-label">Modelo</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="modelo-edit" name="modelo_edit" placeholder="">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="anio-edit" class="col-sm-2 col-form-label">Año</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="anio-edit" name="anio_edit" placeholder="">
+						</div>
+					</div>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+					<input type="submit" class="btn btn-success" value="Editar" id="Editar">
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<!-- Modal Eliminar Vehiculo -->
+<div class="modal fade" id="eliminar-vehiculo-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<form action="{% url 'eliminar_vehiculo' %}" method="POST">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Eliminar Veh&iacute;culo.</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					{% csrf_token %}
+					<div class="form-group row d-none">
+						<label for="id-delete" class="col-sm-2 col-form-label">ID de Veh&iacute;culo</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="id-delete" name="id_delete" placeholder="">
+						</div>
+						<label for="usuario-id" class="col-sm-2 col-form-label">Usuario ID</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="usuario-id" name="usuario_id" value="{{cliente.user.id}}">
+						</div>
+						<label for="cliente-id" class="col-sm-2 col-form-label">Cliente ID</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="cliente-id" name="cliente_id" value="{{cliente.id}}">
+						</div>
+					</div>
+					<div class="form-group row justify-content-md-center">
+						<h4>¿Estás seguro que quieres eliminar el veh&iacute;culo?</h4>
+						<label for="placa-delete" class="col-sm-2 col-form-label">Placa</label>
+						<div class="col-sm-3">
+							<input type="text" readonly="" class="form-control-plaintext" id="placa-delete"
+								name="placa_delete" placeholder="">
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+					<input type="submit" class="btn btn-danger" value="Eliminar">
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/vehiculos/vehiculos.js' %}"></script>
+{% endblock %}
