@@ -20,7 +20,10 @@ def servicios(request):
 def contacto(request):
 	return render(request, 'menu/Contacto.html')
 def graficas(request):
-	return render(request, 'graficas_covid.html')
+	if(request.user.is_authenticated and (request.user.rol == 0 or request.user.rol == 2)):
+		return render(request, 'graficas_covid.html')
+	else:
+		return redirect('/')	
 # Create your views here.
 def pruebas_resumen(request):
 	porResultado =CuadroMedico.objects.all()

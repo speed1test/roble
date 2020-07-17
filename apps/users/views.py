@@ -34,9 +34,13 @@ def logout(request):
 	return redirect('/')
 
 def gestion_laboratorista(request):	
-	laboratoristas = Laboratorista.objects.all()
-	contexto = {'laboratoristas': laboratoristas,}
-	return render(request, 'gestion_usuarios/gestion_laboratorista.html', contexto)
+	if(request.user.is_authenticated and request.user.rol == 0):
+		laboratoristas = Laboratorista.objects.all()
+		contexto = {'laboratoristas': laboratoristas,}
+		return render(request, 'gestion_usuarios/gestion_laboratorista.html', contexto)
+	else:
+		contexto = {}
+		return redirect('/')
 
 def eliminar_laboratorista(request):
 
@@ -105,10 +109,15 @@ def editar_laboratorista(request):
 
 	return redirect('gestion_laboratorista')
 
-def gestion_minsal(request):	
-	minsal = Minsal.objects.all()
-	contexto = {'minsal': minsal,}
-	return render(request, 'gestion_usuarios/gestion_minsal.html', contexto)
+def gestion_minsal(request):
+	if(request.user.is_authenticated and request.user.rol == 0):
+		minsal = Minsal.objects.all()
+		contexto = {'minsal': minsal,}
+		return render(request, 'gestion_usuarios/gestion_minsal.html', contexto)
+	else:
+		contexto = {}
+		return redirect('/')
+
 
 def eliminar_minsal(request):
 
@@ -178,11 +187,15 @@ def editar_minsal(request):
 	return redirect('gestion_minsal')
 
 
-def gestion_paciente(request):	
-	pacientes = CuadroMedico.objects.all().select_related()
-	form = FormFiltrar()
-	contexto = {'pacientes': pacientes,'form':form,}
-	return render(request, 'gestion_usuarios/gestion_paciente.html', contexto)
+def gestion_paciente(request):
+	if(request.user.is_authenticated and (request.user.rol == 0 or request.user.rol == 1)):
+		pacientes = CuadroMedico.objects.all().select_related()
+		form = FormFiltrar()
+		contexto = {'pacientes': pacientes,'form':form,}
+		return render(request, 'gestion_usuarios/gestion_paciente.html', contexto)
+
+	else:
+		return redirect('/')	
 
 def registrar_paciente(request):
 	nombre_paciente = request.POST['nombre']
@@ -238,9 +251,12 @@ def editar_paciente(request):
 	return redirect('gestion_paciente')
 
 def caso_sospechoso(request):	
-	pacientes = Paciente.objects.all()
-	contexto = {'pacientes': pacientes}
-	return render(request, 'expediente/casos-sospechosos.html', contexto)
+	if(request.user.is_authenticated and request.user.rol == 0):
+		pacientes = Paciente.objects.all()
+		contexto = {'pacientes': pacientes}
+		return render(request, 'expediente/casos-sospechosos.html', contexto)
+	else:
+		return redirect('/')	
 
 def nexo(request,paciente_id):
 
