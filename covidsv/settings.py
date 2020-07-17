@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'u20k^j_*kdnu1uj7zxi6fr7-lw=t0#_h$9ibb*wz_x#%lrn^b9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['localhost','miguecovid.duckdns.org','covidsv.tk']
 
@@ -133,7 +133,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = (
     'apps/covid/static/',
     'apps/users/static/',
-    '/var/www/html/aplicacion/roble/static/'
 )
 AUTH_USER_MODEL = 'users.User'
 
