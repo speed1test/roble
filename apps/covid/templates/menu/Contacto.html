@@ -1,0 +1,102 @@
+{% extends 'base/base.html' %}
+
+{% load static %}
+{% block extra_header %}
+<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+	<!-- Start Carousel -->
+	<div class="carousel-inner" role="listbox">
+			<div class="carousel-caption d-none d-md-block carousel-message">
+
+			{% if request.user.rol == 0 %}
+			<!-- Vista para Admin -->
+			<h3>{{request.user.first_name}}&nbsp;{{request.user.last_name}}</h3>
+			<p class="float-right p-carousel">&#8212;&nbsp;Doctor</p>
+			{% elif request.user.rol == 1 %}
+			<!-- Vista para Técnico -->
+			<h3>{{request.user.first_name}}&nbsp;{{request.user.last_name}}</h3>
+			<p class="float-right p-carousel">&#8212;&nbsp;Laboratorista</p>
+			{% elif request.user.rol == 2 %}
+			<!-- Vista para Cliente -->
+			<h3>{{request.user.first_name}}&nbsp;{{request.user.last_name}}</h3>
+			<p class="float-right p-carousel">&#8212;&nbsp;MINSAL</p>
+			{% else %}
+			<!-- Vista para Visitante -->
+			<h2 class="animated infinite bounce pulse">COVID SV</h2>
+			{% endif %}
+
+
+		</div>
+
+		<!-- Slide One - Set the background image for this slide in the line below -->
+		<div class="carousel-item active" style="background-image: url({% static 'img/carousel/c1.jpg' %})">
+		</div>
+
+		<!-- Slide Two - Set the background image for this slide in the line below -->
+		<div class="carousel-item" style="background-image: url({% static 'img/carousel/c2.jpg' %})">
+		</div>
+
+		<!-- Slide Three - Set the background image for this slide in the line below -->
+		<div class="carousel-item" style="background-image: url({% static 'img/carousel/c3.jpg' %})">
+		</div>
+
+	</div>
+</div> <!-- End Carousel -->
+{% endblock %}
+{% block main_container %}
+
+
+<center>
+	<h1>
+		Puedes contactarnos en nuestra red social corportativa:
+	</h1>
+	<a href="https://covidsv.tk/red/">
+		<h1>Clic aquí</h1>
+	</a>
+	<h1>O si lo lo prefieres desde nuestro correo: </h1>
+	<a href="mailto:covidsvcorporate@gmail.com">
+		<h1>Clic aquí</h1>
+	</a>
+</center>
+
+<!-- Muestra mensaje de error -->
+{% if messages %}
+<div class="modal fade" id="mostrarmodal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3>Error al iniciar sesión</h3>
+			</div>
+			{% for message in messages %}
+			<div class="modal-body">
+				<h4 {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</h4>
+			</div>
+			{% endfor %}
+			<div class="modal-footer">
+				<a href="#" data-dismiss="modal" class="btn btn-danger">Cerrar</a>
+			</div>
+		</div>
+	</div>
+</div>
+{% endif %}
+<script>
+	$(document).ready(function()
+	{
+	   $("#mostrarmodal").modal("show");
+	});
+ </script>
+ <!-- Fin del mensaje de error -->
+
+
+<!-- Vista para Visitante -->
+
+<div id="mySidenav" class="sidenav text-center">
+	<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+	{% include 'users/login.html' %}
+</div>
+{% endblock %}
+<!-- Modal -->
+
+
+{% block extra_js %}
+<script src="{% static 'js/side.js' %}"></script>
+{% endblock %}

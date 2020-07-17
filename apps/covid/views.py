@@ -13,6 +13,12 @@ from django.http import JsonResponse
 from collections import OrderedDict as SortedDict
 def index(request):
 	return render(request, 'index.html')
+def instalaciones(request):
+	return render(request, 'menu/Instalaciones.html')
+def servicios(request):
+	return render(request, 'menu/Servicios.html')
+def contacto(request):
+	return render(request, 'menu/Contacto.html')
 def graficas(request):
 	return render(request, 'graficas_covid.html')
 # Create your views here.

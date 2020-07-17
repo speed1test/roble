@@ -1,0 +1,96 @@
+{% extends 'base/base.html' %}
+
+{% load static %}
+{% block extra_header %}
+<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+	<!-- Start Carousel -->
+	<div class="carousel-inner" role="listbox">
+			<div class="carousel-caption d-none d-md-block carousel-message">
+
+			{% if request.user.rol == 0 %}
+			<!-- Vista para Admin -->
+			<h3>{{request.user.first_name}}&nbsp;{{request.user.last_name}}</h3>
+			<p class="float-right p-carousel">&#8212;&nbsp;Doctor</p>
+			{% elif request.user.rol == 1 %}
+			<!-- Vista para Técnico -->
+			<h3>{{request.user.first_name}}&nbsp;{{request.user.last_name}}</h3>
+			<p class="float-right p-carousel">&#8212;&nbsp;Laboratorista</p>
+			{% elif request.user.rol == 2 %}
+			<!-- Vista para Cliente -->
+			<h3>{{request.user.first_name}}&nbsp;{{request.user.last_name}}</h3>
+			<p class="float-right p-carousel">&#8212;&nbsp;MINSAL</p>
+			{% else %}
+			<!-- Vista para Visitante -->
+			<h2 class="animated infinite bounce pulse">COVID SV</h2>
+			{% endif %}
+
+
+		</div>
+
+		<!-- Slide One - Set the background image for this slide in the line below -->
+		<div class="carousel-item active" style="background-image: url({% static 'img/carousel/c1.jpg' %})">
+		</div>
+
+		<!-- Slide Two - Set the background image for this slide in the line below -->
+		<div class="carousel-item" style="background-image: url({% static 'img/carousel/c2.jpg' %})">
+		</div>
+
+		<!-- Slide Three - Set the background image for this slide in the line below -->
+		<div class="carousel-item" style="background-image: url({% static 'img/carousel/c3.jpg' %})">
+		</div>
+
+	</div>
+</div> <!-- End Carousel -->
+{% endblock %}
+{% block main_container %}
+
+
+<center>
+	<img src="https://es.covance.com/img/covance/ES_95369.png" width="50%">
+	<h3>Aproveche al máximo nuestra red de laboratorios centrales integrados a nivel mundial con la ayuda de nuestros expertos en ciencia y operaciones. Puesto que tenemos una amplia experiencia adquirida en más de 4.400 ensayos clínicos llevados a cabo durante los últimos cinco años en diversas áreas terapéuticas, estamos en posición de optimizar sus estudios y mitigar posibles problemas para cumplir con el ritmo acelerado asociado a los estudios sobre coronavirus (COVID-19). </h3>
+	<img src="https://i.ibb.co/MRMwQzQ/subir.png" width="50%">
+	<br>
+</center>
+
+<!-- Muestra mensaje de error -->
+{% if messages %}
+<div class="modal fade" id="mostrarmodal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3>Error al iniciar sesión</h3>
+			</div>
+			{% for message in messages %}
+			<div class="modal-body">
+				<h4 {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</h4>
+			</div>
+			{% endfor %}
+			<div class="modal-footer">
+				<a href="#" data-dismiss="modal" class="btn btn-danger">Cerrar</a>
+			</div>
+		</div>
+	</div>
+</div>
+{% endif %}
+<script>
+	$(document).ready(function()
+	{
+	   $("#mostrarmodal").modal("show");
+	});
+ </script>
+ <!-- Fin del mensaje de error -->
+
+
+<!-- Vista para Visitante -->
+
+<div id="mySidenav" class="sidenav text-center">
+	<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+	{% include 'users/login.html' %}
+</div>
+{% endblock %}
+<!-- Modal -->
+
+
+{% block extra_js %}
+<script src="{% static 'js/side.js' %}"></script>
+{% endblock %}
