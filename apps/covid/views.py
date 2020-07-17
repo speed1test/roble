@@ -77,3 +77,28 @@ def pruebas_resumen_genero(request):
 	finalrep = listsort(finalrep) 
 	return JsonResponse({'pruebas_resumen_genero':finalrep},safe=False)
 
+def pruebas_resumen_genero_sospechosos(request):
+	porResultado =CasoSospechoso.objects.all()
+	finalrep ={}
+	Femenino = 0 
+	Masculino = 0
+	for item in porResultado:
+		if item.sexo_sospechoso == 1:		
+			Femenino = Femenino + 1
+		if item.sexo_sospechoso == 0:
+			Masculino = Masculino + 1
+
+	finalrep["Femeninos"]=Femenino
+	finalrep["Masculinos"]=Masculino
+
+	def listsort(value):
+		if isinstance(value,dict):
+			new_dict = SortedDict()
+			key_list = value.keys()
+			key_list=sorted(key_list)
+			for key in key_list:
+				new_dict[key] = value[key]
+			return new_dict
+	
+	finalrep = listsort(finalrep) 
+	return JsonResponse({'pruebas_resumen_genero_sospechosos':finalrep},safe=False)
