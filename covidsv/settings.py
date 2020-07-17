@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import mimetypes
+mimetypes.add_type("text/css", ".css", True)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,9 +25,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'u20k^j_*kdnu1uj7zxi6fr7-lw=t0#_h$9ibb*wz_x#%lrn^b9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['localhost','miguecovid.duckdns.org']
+ALLOWED_HOSTS = ['localhost','miguecovid.duckdns.org','covidsv.tk']
 
 
 # Application definition
@@ -127,12 +129,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = (
-    '/covid/static/',
-    '/users/static/',
+    'apps/covid/static/',
+    'apps/users/static/',
+    '/var/www/html/aplicacion/roble/static/'
 )
-
 AUTH_USER_MODEL = 'users.User'
+
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
