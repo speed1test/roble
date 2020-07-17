@@ -241,8 +241,8 @@ def editar_paciente(request):
 	cuadroMedico.estado_paciente = request.POST['estado_edit']
 	paciente.sexo_paciente = request.POST['sexo_edit']
 	paciente.fecha_paciente = request.POST['fecha_edit']
-	localidad = Municipio.objects.get(idMunicipio=request.POST['municipio'])
-	paciente.localidad = localidad
+	#localidad = Municipio.objects.get(idMunicipio=request.POST['municipio'])
+	#paciente.localidad = localidad
 
 	if request.user.rol == 0:
 		cuadroMedico.descripcion_paciente = request.POST['sintomas']
@@ -252,21 +252,47 @@ def editar_paciente(request):
 
 def caso_sospechoso(request):	
 	if(request.user.is_authenticated and request.user.rol == 0):
-		pacientes = Paciente.objects.all()
-		contexto = {'pacientes': pacientes}
+		cuadros = CuadroMedico.objects.all()
+		contexto = {'cuadros': cuadros}
 		return render(request, 'expediente/casos-sospechosos.html', contexto)
 	else:
 		return redirect('/')	
 
-def nexo(request,paciente_id):
+def nexo(request,cuadro_id):
+	if(request.user.is_authenticated and request.user.rol == 0):
+		cuadros = CuadroMedico.objects.get(pk=cuadro_id)
+		casos = CasoSospechoso.objects.filter(cuadro=cuadros)
 
-	paciente = Paciente.objects.get(pk=paciente_id)
-	nexo = CasoSospechoso.objects.get(vehiculo_id=vehiculo_id)
+		contexto = {
+			'cuadros':cuadros,
+			'casos':casos,
+		}
 
-	contexto = {
-		'vehiculo':vehiculo,
-		'expediente':expediente,
-	}
+		return render(request, 'expediente/nexos/nexos.html', contexto)
+	else:
+		return redirect('/')	
 
-	return render(request, 'vehiculo/expediente.html', contexto)
+def registrar_nexo(request):
+	cuadros = CuadroMedico.objects.get(pk=request.POST['cuadro_id'])
+	nombre_sospechoso = request.POST['nombre']
+	apellido_sospechoso = request.POST['apellido']
+	sexo = request.POST['sexo']
+	d = datetime.strptime(request.POST['fecha'], '%Y-%m-%d')
+	d.strftime('%Y-%m-%d')
+
+	sospechoso = CasoSospechoso()
+	sospechoso.nombre_sospechoso = nombre_sospechoso
+	sospechoso.apellido_sospechoso = apellido_sospechoso
+	sospechoso.sexo_sospechoso = sexo
+	sospechoso.fecha_sospechoso = d
+	sospechoso.cuadro = cuadros
+	sospechoso.save()
+
+	if request.user.is_authenticated:
+
+		return redirect('nexo', cuadro_id=request.POST['cuadro_id'])
+
+	else:
+		
+		return redirect('/')
 

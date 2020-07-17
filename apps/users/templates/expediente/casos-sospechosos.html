@@ -158,224 +158,40 @@
 				</tr>
 			</thead>
 			<tbody>
-				{% for vehiculo in pacientes %}
+				{% for vehiculo in cuadros %}
 				<tr class="d-flex text-center">
 					<td class="col-1 font-weight-bold">{{ forloop.counter }}</td>
-					<td class="col-1 font-weight-bold">{{vehiculo.nombre_paciente}}</td>
-					<td class="col-2">{{vehiculo.apellido_paciente}}</td>
-					<td class="col-2">{{vehiculo.localidad.nombre_municipio}}</td>
-					<td class="col-2">{{vehiculo.localidad.departamento.nombre_departamento }}</td>
+					<td class="col-1 font-weight-bold">{{vehiculo.paciente.nombre_paciente}}</td>
+					<td class="col-2">{{vehiculo.paciente.apellido_paciente}}</td>
+					<td class="col-2">{{vehiculo.paciente.localidad.nombre_municipio}}</td>
+					<td class="col-2">{{vehiculo.paciente.localidad.departamento.nombre_departamento }}</td>
 					<td class="col-4">
-
-
+						{% if vehiculo.estado_paciente == True %}
+							<a href="{% url 'nexo' cuadro_id=vehiculo.idCuadroMedico %}" class="btn btn-success" title="">
+							Agregar Nexos;<i class="fas fa-file-invoice"></i>
+							</a>
+						{% else %}
+							<p>No Aplica</p>
+						{% endif %}
+						<!--
 						<button class="btn btn-success" title="Agregar Nexos"
 							data-toggle="modal" data-target="#editar-vehiculo-modal" data-id="{{vehiculo.id}}"
 							data-placa="{{vehiculo.placa}}" data-tipo="{{vehiculo.tipo}}"
 							data-marca="{{vehiculo.marca}}" data-modelo="{{vehiculo.modelo}}"
 							data-anio="{{vehiculo.anio}}">Agregar Nexos<i class="fas fa-file-invoice"></i></button>
 					</td>
+				-->
 				</tr>
 				{% empty %}
 				<tr>
 					<td colspan="6">
-						<h4>Aun no registras veh&iacute;culos.</h4>
+						<h4>Aun no registras pacientes, para poder agregar nexos :/</h4>
 					</td>
 				</tr>
 				{% endfor %}
 			</tbody>
 		</table>
 
-	</div>
-</div>
-
-<!-- Modal Agregar Vehiculo -->
-<div class="modal fade" id="agregar-vehiculo-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-	aria-hidden="true">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<form action="" method="POST">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">Agregar nuevo Veh&iacute;culo.</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					{% csrf_token %}
-					<div class="form-group row d-none">
-						<label for="usuario-id" class="col-sm-2 col-form-label">Usuario ID</label>
-						<div class="col-sm-10">
-							<input type="text" class="form-control" id="usuario-id" name="usuario_id" value="{{cliente.user.id}}">
-						</div>
-						<label for="cliente-id" class="col-sm-2 col-form-label">Cliente ID</label>
-						<div class="col-sm-10">
-							<input type="text" class="form-control" id="cliente-id" name="cliente_id" value="{{cliente.id}}">
-						</div>
-					</div>
-					<div class="form-group row">
-						<label for="placa" class="col-sm-2 col-form-label">Placa</label>
-						<div class="col-sm-10">
-							<input type="text" class="form-control" id="placa" name="placa" placeholder="">
-						</div>
-					</div>
-					<div class="form-group row align-items-center">
-						<label for="tipo" class="col-sm-2 col-form-label">Tipo</label>
-						<div class="col-sm-10">
-							<select class="form-control" id="tipo" name="tipo">
-
-								<option name='tipo' value="Sedan">Sedan</option>
-								<option name='tipo' value="Pick Up">Pick Up</option>
-								<option name='tipo' value="Camioneta">Camioneta</option>
-								<option name='tipo' value="Deportivo">Deportivo</option>
-							</select>
-						</div>
-					</div>
-					<div class="form-group row">
-						<label for="marca" class="col-sm-2 col-form-label">Marca</label>
-						<div class="col-sm-10">
-							<input type="text" class="form-control" id="marca" name="marca" placeholder="">
-						</div>
-					</div>
-					<div class="form-group row">
-						<label for="modelo" class="col-sm-2 col-form-label">Modelo</label>
-						<div class="col-sm-10">
-							<input type="text" class="form-control" id="modelo" name="modelo" placeholder="">
-						</div>
-					</div>
-					<div class="form-group row">
-						<label for="anio" class="col-sm-2 col-form-label">Año</label>
-						<div class="col-sm-10">
-							<input type="text" class="form-control" id="anio" name="anio" placeholder="">
-						</div>
-					</div>
-
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-					<input type="submit" class="btn btn-success" value="Guardar" id="Guardar">
-				</div>
-			</form>
-		</div>
-	</div>
-</div>
-
-<!-- Modal Editar Vehiculo -->
-<div class="modal fade" id="editar-vehiculo-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-	aria-hidden="true">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<form action="" method="POST">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">Editar Veh&iacute;culo.</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					{% csrf_token %}
-					<div class="form-group row d-none">
-						<label for="id-edit" class="col-sm-2 col-form-label">ID de Veh&iacute;culo</label>
-						<div class="col-sm-10">
-							<input type="text" class="form-control" id="id-edit" name="id_edit" placeholder="">
-						</div>
-						<label for="usuario-id" class="col-sm-2 col-form-label">Usuario ID</label>
-						<div class="col-sm-10">
-							<input type="text" class="form-control" id="usuario-id" name="usuario_id" value="{{cliente.user.id}}">
-						</div>
-						<label for="cliente-id" class="col-sm-2 col-form-label">Cliente ID</label>
-						<div class="col-sm-10">
-							<input type="text" class="form-control" id="cliente-id" name="cliente_id" value="{{cliente.id}}">
-						</div>
-					</div>
-					<div class="form-group row">
-						<label for="placa-edit" class="col-sm-2 col-form-label">Placa</label>
-						<div class="col-sm-10">
-							<input type="text" class="form-control" id="placa-edit" name="placa_edit" placeholder="">
-						</div>
-					</div>
-					<div class="form-group row align-items-center">
-						<label for="tipo-edit" class="col-sm-2 col-form-label">Tipo</label>
-						<div class="col-sm-10">
-							<select class="form-control" id="tipo-edit" name="tipo_edit">
-
-								<option name='' value="Sedan">Sedan</option>
-								<option name='' value="Pick Up">Pick Up</option>
-								<option name='' value="Camioneta">Camioneta</option>
-								<option name='' value="Deportivo">Deportivo</option>
-							</select>
-						</div>
-					</div>
-					<div class="form-group row">
-						<label for="marca-edit" class="col-sm-2 col-form-label">Marca</label>
-						<div class="col-sm-10">
-							<input type="text" class="form-control" id="marca-edit" name="marca_edit" placeholder="">
-						</div>
-					</div>
-					<div class="form-group row">
-						<label for="modelo-edit" class="col-sm-2 col-form-label">Modelo</label>
-						<div class="col-sm-10">
-							<input type="text" class="form-control" id="modelo-edit" name="modelo_edit" placeholder="">
-						</div>
-					</div>
-					<div class="form-group row">
-						<label for="anio-edit" class="col-sm-2 col-form-label">Año</label>
-						<div class="col-sm-10">
-							<input type="text" class="form-control" id="anio-edit" name="anio_edit" placeholder="">
-						</div>
-					</div>
-
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-					<input type="submit" class="btn btn-success" value="Editar" id="Editar">
-				</div>
-			</form>
-		</div>
-	</div>
-</div>
-
-<!-- Modal Eliminar Vehiculo -->
-<div class="modal fade" id="eliminar-vehiculo-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<form action="" method="POST">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">Eliminar Veh&iacute;culo.</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					{% csrf_token %}
-					<div class="form-group row d-none">
-						<label for="id-delete" class="col-sm-2 col-form-label">ID de Veh&iacute;culo</label>
-						<div class="col-sm-10">
-							<input type="text" class="form-control" id="id-delete" name="id_delete" placeholder="">
-						</div>
-						<label for="usuario-id" class="col-sm-2 col-form-label">Usuario ID</label>
-						<div class="col-sm-10">
-							<input type="text" class="form-control" id="usuario-id" name="usuario_id" value="{{cliente.user.id}}">
-						</div>
-						<label for="cliente-id" class="col-sm-2 col-form-label">Cliente ID</label>
-						<div class="col-sm-10">
-							<input type="text" class="form-control" id="cliente-id" name="cliente_id" value="{{cliente.id}}">
-						</div>
-					</div>
-					<div class="form-group row justify-content-md-center">
-						<h4>¿Estás seguro que quieres eliminar el veh&iacute;culo?</h4>
-						<label for="placa-delete" class="col-sm-2 col-form-label">Placa</label>
-						<div class="col-sm-3">
-							<input type="text" readonly="" class="form-control-plaintext" id="placa-delete"
-								name="placa_delete" placeholder="">
-						</div>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-					<input type="submit" class="btn btn-danger" value="Eliminar">
-				</div>
-			</form>
-		</div>
 	</div>
 </div>
 

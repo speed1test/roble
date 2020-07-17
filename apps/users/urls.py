@@ -27,5 +27,6 @@ urlpatterns = [
 	path('registrar-paciente/', views.registrar_paciente, name='registrar_paciente'),
 	path('editar-paciente/', views.editar_paciente, name='editar_paciente'),
 	path('caso-sospechoso', views.caso_sospechoso, name='caso_sospechoso'),
-	path('nexos/<int:paciente_id>', views.nexo, name='nexo'),	
+	path('nexos/<int:cuadro_id>', views.nexo, name='nexo'),	
+	path('registrar-nexo/', views.registrar_nexo, name='registrar_nexo'),
 ]
